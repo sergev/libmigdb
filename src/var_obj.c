@@ -2,17 +2,17 @@
 
   GDB/MI interface library
   Copyright (c) 2004 by Salvador E. Tropea.
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -53,73 +53,73 @@ It isn't implemented.@*
 
 void mi_var_create(mi_h *h, const char *name, int frame, const char *exp)
 {
- const char *n=name ? name : "-";
+    const char *n = name ? name : "-";
 
- if (frame<0)
-    mi_send(h,"-var-create %s * %s\n",n,exp);
- else
-    mi_send(h,"-var-create %s %d %s\n",n,frame,exp);
+    if (frame < 0)
+        mi_send(h, "-var-create %s * %s\n", n, exp);
+    else
+        mi_send(h, "-var-create %s %d %s\n", n, frame, exp);
 }
 
 void mi_var_delete(mi_h *h, const char *name)
 {
- mi_send(h,"-var-delete %s\n",name);
+    mi_send(h, "-var-delete %s\n", name);
 }
 
 void mi_var_set_format(mi_h *h, const char *name, const char *format)
 {
- mi_send(h,"-var-set-format \"%s\" %s\n",name,format);
+    mi_send(h, "-var-set-format \"%s\" %s\n", name, format);
 }
 
 void mi_var_show_format(mi_h *h, const char *name)
 {
- mi_send(h,"-var-show-format \"%s\"\n",name);
+    mi_send(h, "-var-show-format \"%s\"\n", name);
 }
 
 void mi_var_info_num_children(mi_h *h, const char *name)
 {
- mi_send(h,"-var-info-num-children \"%s\"\n",name);
+    mi_send(h, "-var-info-num-children \"%s\"\n", name);
 }
 
 void mi_var_info_type(mi_h *h, const char *name)
 {
- mi_send(h,"-var-info-type \"%s\"\n",name);
+    mi_send(h, "-var-info-type \"%s\"\n", name);
 }
 
 void mi_var_info_expression(mi_h *h, const char *name)
 {
- mi_send(h,"-var-info-expression \"%s\"\n",name);
+    mi_send(h, "-var-info-expression \"%s\"\n", name);
 }
 
 void mi_var_show_attributes(mi_h *h, const char *name)
 {
- mi_send(h,"-var-show-attributes \"%s\"\n",name);
+    mi_send(h, "-var-show-attributes \"%s\"\n", name);
 }
 
 void mi_var_update(mi_h *h, const char *name)
 {
- if (name)
-    mi_send(h,"-var-update %s\n",name);
- else
-    mi_send(h,"-var-update *\n");
+    if (name)
+        mi_send(h, "-var-update %s\n", name);
+    else
+        mi_send(h, "-var-update *\n");
 }
 
 void mi_var_assign(mi_h *h, const char *name, const char *expression)
 {
- mi_send(h,"-var-assign \"%s\" \"%s\"\n",name,expression);
+    mi_send(h, "-var-assign \"%s\" \"%s\"\n", name, expression);
 }
 
 void mi_var_evaluate_expression(mi_h *h, const char *name)
 {
- mi_send(h,"-var-evaluate-expression \"%s\"\n",name);
+    mi_send(h, "-var-evaluate-expression \"%s\"\n", name);
 }
 
 void mi_var_list_children(mi_h *h, const char *name)
 {
- if (h->version>=MI_VERSION2U(2,0,0))
-    mi_send(h,"-var-list-children --all-values \"%s\"\n",name);
- else
-    mi_send(h,"-var-list-children \"%s\"\n",name);
+    if (h->version >= MI_VERSION2U(2, 0, 0))
+        mi_send(h, "-var-list-children --all-values \"%s\"\n", name);
+    else
+        mi_send(h, "-var-list-children \"%s\"\n", name);
 }
 
 /* High level versions. */
@@ -132,13 +132,13 @@ gdb choose the names.
 
   Command: -var-create
   Return: A new mi_gvar strcture or NULL on error.
-  
+
 ***************************************************************************/
 
 mi_gvar *gmi_var_create_nm(mi_h *h, const char *name, int frame, const char *exp)
 {
- mi_var_create(h,name,frame,exp);
- return mi_res_gvar(h,NULL,exp);
+    mi_var_create(h, name, frame, exp);
+    return mi_res_gvar(h, NULL, exp);
 }
 
 /**[txh]********************************************************************
@@ -149,12 +149,12 @@ mi_gvar *gmi_var_create_nm(mi_h *h, const char *name, int frame, const char *exp
 
   Command: -var-create [auto name]
   Return: A new mi_gvar strcture or NULL on error.
-  
+
 ***************************************************************************/
 
 mi_gvar *gmi_var_create(mi_h *h, int frame, const char *exp)
 {
- return gmi_var_create_nm(h,NULL,frame,exp);
+    return gmi_var_create_nm(h, NULL, frame, exp);
 }
 
 /**[txh]********************************************************************
@@ -164,13 +164,13 @@ mi_gvar *gmi_var_create(mi_h *h, int frame, const char *exp)
 
   Command: -var-delete
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_delete(mi_h *h, mi_gvar *var)
 {
- mi_var_delete(h,var->name);
- return mi_res_simple_done(h);
+    mi_var_delete(h, var->name);
+    return mi_res_simple_done(h);
 }
 
 /**[txh]********************************************************************
@@ -180,18 +180,18 @@ int gmi_var_delete(mi_h *h, mi_gvar *var)
 
   Command: -var-set-format
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_set_format(mi_h *h, mi_gvar *var, enum mi_gvar_fmt format)
 {
- int ret;
+    int ret;
 
- mi_var_set_format(h,var->name,mi_format_enum_to_str(format));
- ret=mi_res_simple_done(h);
- if (ret)
-    var->format=format;
- return ret;
+    mi_var_set_format(h, var->name, mi_format_enum_to_str(format));
+    ret = mi_res_simple_done(h);
+    if (ret)
+        var->format = format;
+    return ret;
 }
 
 /**[txh]********************************************************************
@@ -201,13 +201,13 @@ int gmi_var_set_format(mi_h *h, mi_gvar *var, enum mi_gvar_fmt format)
 
   Command: -var-show-format
   Return: !=0 OK.
-  
+
 ***************************************************************************/
 
 int gmi_var_show_format(mi_h *h, mi_gvar *var)
 {
- mi_var_show_format(h,var->name);
- return mi_res_gvar(h,var,NULL)!=NULL;
+    mi_var_show_format(h, var->name);
+    return mi_res_gvar(h, var, NULL) != NULL;
 }
 
 /**[txh]********************************************************************
@@ -217,13 +217,13 @@ int gmi_var_show_format(mi_h *h, mi_gvar *var)
 
   Command: -var-info-num-children
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_info_num_children(mi_h *h, mi_gvar *var)
 {
- mi_var_info_num_children(h,var->name);
- return mi_res_gvar(h,var,NULL)!=NULL;
+    mi_var_info_num_children(h, var->name);
+    return mi_res_gvar(h, var, NULL) != NULL;
 }
 
 /**[txh]********************************************************************
@@ -233,13 +233,13 @@ int gmi_var_info_num_children(mi_h *h, mi_gvar *var)
 
   Command: -var-info-type
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_info_type(mi_h *h, mi_gvar *var)
 {
- mi_var_info_type(h,var->name);
- return mi_res_gvar(h,var,NULL)!=NULL;
+    mi_var_info_type(h, var->name);
+    return mi_res_gvar(h, var, NULL) != NULL;
 }
 
 /**[txh]********************************************************************
@@ -250,15 +250,14 @@ isn't filled during creation.
 
   Command: -var-info-expression
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_info_expression(mi_h *h, mi_gvar *var)
 {
- mi_var_info_expression(h,var->name);
- return mi_res_gvar(h,var,NULL)!=NULL;
+    mi_var_info_expression(h, var->name);
+    return mi_res_gvar(h, var, NULL) != NULL;
 }
-
 
 /**[txh]********************************************************************
 
@@ -268,13 +267,13 @@ during creation.
 
   Command: -var-show-attributes
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_show_attributes(mi_h *h, mi_gvar *var)
 {
- mi_var_show_attributes(h,var->name);
- return mi_res_gvar(h,var,NULL)!=NULL;
+    mi_var_show_attributes(h, var->name);
+    return mi_res_gvar(h, var, NULL) != NULL;
 }
 
 /**[txh]********************************************************************
@@ -285,18 +284,17 @@ selected by gdb.
 
   Command: -var-create + -var-info-expression + -var-show-attributes
   Return: A new mi_gvar strcture or NULL on error.
-  
+
 ***************************************************************************/
 
 mi_gvar *gmi_full_var_create(mi_h *h, int frame, const char *exp)
 {
- mi_gvar *var=gmi_var_create_nm(h,NULL,frame,exp);
- if (var)
-   {/* What if it fails? */
-    gmi_var_info_expression(h,var);
-    gmi_var_show_attributes(h,var);
-   }
- return var;
+    mi_gvar *var = gmi_var_create_nm(h, NULL, frame, exp);
+    if (var) { /* What if it fails? */
+        gmi_var_info_expression(h, var);
+        gmi_var_show_attributes(h, var);
+    }
+    return var;
 }
 
 /**[txh]********************************************************************
@@ -307,13 +305,13 @@ updated.
 
   Command: -var-update
   Return: !=0 OK. The @var{changed} list contains the list of changed vars.
-  
+
 ***************************************************************************/
 
 int gmi_var_update(mi_h *h, mi_gvar *var, mi_gvar_chg **changed)
 {
- mi_var_update(h,var ? var->name : NULL);
- return mi_res_changelist(h,changed);
+    mi_var_update(h, var ? var->name : NULL);
+    return mi_res_changelist(h, changed);
 }
 
 /**[txh]********************************************************************
@@ -323,21 +321,20 @@ int gmi_var_update(mi_h *h, mi_gvar *var, mi_gvar_chg **changed)
 
   Command: -var-assign
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_assign(mi_h *h, mi_gvar *var, const char *expression)
 {
- char *res;
- mi_var_assign(h,var->name,expression);
- res=mi_res_value(h);
- if (res)
-   {
-    free(var->value);
-    var->value=res;
-    return 1;
-   }
- return 0;
+    char *res;
+    mi_var_assign(h, var->name, expression);
+    res = mi_res_value(h);
+    if (res) {
+        free(var->value);
+        var->value = res;
+        return 1;
+    }
+    return 0;
 }
 
 /**[txh]********************************************************************
@@ -347,21 +344,20 @@ int gmi_var_assign(mi_h *h, mi_gvar *var, const char *expression)
 
   Command: -var-evaluate-expression
   Return: !=0 OK, value contains the result.
-  
+
 ***************************************************************************/
 
 int gmi_var_evaluate_expression(mi_h *h, mi_gvar *var)
 {
- char *s;
+    char *s;
 
- mi_var_evaluate_expression(h,var->name);
- s=mi_res_value(h);
- if (s)
-   {
-    free(var->value);
-    var->value=s;
-   }
- return s!=NULL;
+    mi_var_evaluate_expression(h, var->name);
+    s = mi_res_value(h);
+    if (s) {
+        free(var->value);
+        var->value = s;
+    }
+    return s != NULL;
 }
 
 /**[txh]********************************************************************
@@ -372,12 +368,11 @@ int gmi_var_evaluate_expression(mi_h *h, mi_gvar *var)
 
   Command: -var-list-children
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_var_list_children(mi_h *h, mi_gvar *var)
 {
- mi_var_list_children(h,var->name);
- return mi_res_children(h,var);
+    mi_var_list_children(h, var->name);
+    return mi_res_children(h, var);
 }
-

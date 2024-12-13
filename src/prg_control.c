@@ -2,17 +2,17 @@
 
   GDB/MI interface library
   Copyright (c) 2004 by Salvador E. Tropea.
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -70,107 +70,108 @@ To workaround this bug we must ensure gdb loads *all* the symtabs to memory.
 And here comes another problem -file-exec-and-symbols doesn't support it
 according to docs. In real life that's a wrapper for "file", but as nobody
 can say it won't change we must use the CLI command.
-  
+
 ***************************************************************************/
 
 #include <signal.h>
+
 #include "mi_gdb.h"
 
 /* Low level versions. */
 
 void mi_file_exec_and_symbols(mi_h *h, const char *file)
 {
- if (mi_get_workaround(MI_PSYM_SEARCH))
-    mi_send(h,"file -readnow %s\n",file);
- else
-    mi_send(h,"-file-exec-and-symbols %s\n",file);
+    if (mi_get_workaround(MI_PSYM_SEARCH))
+        mi_send(h, "file -readnow %s\n", file);
+    else
+        mi_send(h, "-file-exec-and-symbols %s\n", file);
 }
 
 void mi_exec_arguments(mi_h *h, const char *args)
 {
- mi_send(h,"-exec-arguments %s\n",args);
+    mi_send(h, "-exec-arguments %s\n", args);
 }
 
 void mi_exec_run(mi_h *h)
 {
- mi_send(h,"-exec-run\n");
+    mi_send(h, "-exec-run\n");
 }
 
 void mi_exec_continue(mi_h *h)
 {
- mi_send(h,"-exec-continue\n");
+    mi_send(h, "-exec-continue\n");
 }
 
 void mi_target_terminal(mi_h *h, const char *tty_name)
 {
- mi_send(h,"tty %s\n",tty_name);
+    mi_send(h, "tty %s\n", tty_name);
 }
 
 void mi_file_symbol_file(mi_h *h, const char *file)
 {
- if (mi_get_workaround(MI_PSYM_SEARCH))
-    mi_send(h,"symbol-file -readnow %s\n",file);
- else
-    mi_send(h,"-file-symbol-file %s\n",file);
+    if (mi_get_workaround(MI_PSYM_SEARCH))
+        mi_send(h, "symbol-file -readnow %s\n", file);
+    else
+        mi_send(h, "-file-symbol-file %s\n", file);
 }
 
 void mi_exec_finish(mi_h *h)
 {
- mi_send(h,"-exec-finish\n");
+    mi_send(h, "-exec-finish\n");
 }
 
 void mi_exec_interrupt(mi_h *h)
 {
- mi_send(h,"-exec-interrupt\n");
+    mi_send(h, "-exec-interrupt\n");
 }
 
 void mi_exec_next(mi_h *h, int count)
 {
- if (count>1)
-    mi_send(h,"-exec-next %d\n",count);
- else
-    mi_send(h,"-exec-next\n");
+    if (count > 1)
+        mi_send(h, "-exec-next %d\n", count);
+    else
+        mi_send(h, "-exec-next\n");
 }
 
 void mi_exec_next_instruction(mi_h *h)
 {
- mi_send(h,"-exec-next-instruction\n");
+    mi_send(h, "-exec-next-instruction\n");
 }
 
 void mi_exec_step(mi_h *h, int count)
 {
- if (count>1)
-    mi_send(h,"-exec-step %d\n",count);
- else
-    mi_send(h,"-exec-step\n");
+    if (count > 1)
+        mi_send(h, "-exec-step %d\n", count);
+    else
+        mi_send(h, "-exec-step\n");
 }
 
 void mi_exec_step_instruction(mi_h *h)
 {
- mi_send(h,"-exec-step-instruction\n");
+    mi_send(h, "-exec-step-instruction\n");
 }
 
 void mi_exec_until(mi_h *h, const char *file, int line)
 {
- if (!file)
-    mi_send(h,"-exec-until\n");
- else
-    mi_send(h,"-exec-until %s:%d\n",file,line);
+    if (!file)
+        mi_send(h, "-exec-until\n");
+    else
+        mi_send(h, "-exec-until %s:%d\n", file, line);
 }
 
 void mi_exec_until_addr(mi_h *h, void *addr)
 {
- mi_send(h,"-exec-until *%p\n",addr);
+    mi_send(h, "-exec-until *%p\n", addr);
 }
 
 void mi_exec_return(mi_h *h)
 {
- mi_send(h,"-exec-return\n");
+    mi_send(h, "-exec-return\n");
 }
 
 void mi_exec_kill(mi_h *h)
 {
- mi_send(h,"kill\n");
+    mi_send(h, "kill\n");
 }
 
 /* High level versions. */
@@ -182,18 +183,18 @@ void mi_exec_kill(mi_h *h)
 
   Command: -file-exec-and-symbols + -exec-arguments
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_set_exec(mi_h *h, const char *file, const char *args)
 {
- mi_file_exec_and_symbols(h,file);
- if (!mi_res_simple_done(h))
-    return 0;
- if (!args)
-    return 1;
- mi_exec_arguments(h,args);
- return mi_res_simple_done(h);
+    mi_file_exec_and_symbols(h, file);
+    if (!mi_res_simple_done(h))
+        return 0;
+    if (!args)
+        return 1;
+    mi_exec_arguments(h, args);
+    return mi_res_simple_done(h);
 }
 
 /**[txh]********************************************************************
@@ -203,13 +204,13 @@ int gmi_set_exec(mi_h *h, const char *file, const char *args)
 
   Command: -exec-run
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_run(mi_h *h)
 {
- mi_exec_run(h);
- return mi_res_simple_running(h);
+    mi_exec_run(h);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -219,13 +220,13 @@ int gmi_exec_run(mi_h *h)
 
   Command: -exec-continue
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_continue(mi_h *h)
 {
- mi_exec_continue(h);
- return mi_res_simple_running(h);
+    mi_exec_continue(h);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -235,14 +236,14 @@ int gmi_exec_continue(mi_h *h)
 
   Command: tty
   Return: !=0 OK
-  Example: 
-  
+  Example:
+
 ***************************************************************************/
 
 int gmi_target_terminal(mi_h *h, const char *tty_name)
 {
- mi_target_terminal(h,tty_name);
- return mi_res_simple_done(h);
+    mi_target_terminal(h, tty_name);
+    return mi_res_simple_done(h);
 }
 
 /**[txh]********************************************************************
@@ -252,13 +253,13 @@ int gmi_target_terminal(mi_h *h, const char *tty_name)
 
   Command: -file-symbol-file
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_file_symbol_file(mi_h *h, const char *file)
 {
- mi_file_symbol_file(h,file);
- return mi_res_simple_done(h);
+    mi_file_symbol_file(h, file);
+    return mi_res_simple_done(h);
 }
 
 /**[txh]********************************************************************
@@ -269,13 +270,13 @@ response.
 
   Command: -exec-finish
   Return: !=0 OK.
-  
+
 ***************************************************************************/
 
 int gmi_exec_finish(mi_h *h)
 {
- mi_exec_finish(h);
- return mi_res_simple_running(h);
+    mi_exec_finish(h);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -287,19 +288,19 @@ isn't really working.
 
   Command: -exec-interrupt [replacement]
   Return: Always 1
-  Example: 
-  
+  Example:
+
 ***************************************************************************/
 
 int gmi_exec_interrupt(mi_h *h)
 {
- // **** IMPORTANT!!! **** Not even gdb 6.1.1 can do it because the "async"
- // mode isn't really working.
- //mi_exec_interrupt(h);
- //return mi_res_simple_running(h);
+    // **** IMPORTANT!!! **** Not even gdb 6.1.1 can do it because the "async"
+    // mode isn't really working.
+    // mi_exec_interrupt(h);
+    // return mi_res_simple_running(h);
 
- kill(h->pid,SIGINT);
- return 1; // How can I know?
+    kill(h->pid, SIGINT);
+    return 1; // How can I know?
 }
 
 /**[txh]********************************************************************
@@ -309,13 +310,13 @@ int gmi_exec_interrupt(mi_h *h)
 
   Command: -exec-next
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_next(mi_h *h)
 {
- mi_exec_next(h,1);
- return mi_res_simple_running(h);
+    mi_exec_next(h, 1);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -330,8 +331,8 @@ int gmi_exec_next(mi_h *h)
 
 int gmi_exec_next_cnt(mi_h *h, int count)
 {
- mi_exec_next(h,count);
- return mi_res_simple_running(h);
+    mi_exec_next(h, count);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -346,8 +347,8 @@ int gmi_exec_next_cnt(mi_h *h, int count)
 
 int gmi_exec_next_instruction(mi_h *h)
 {
- mi_exec_next_instruction(h);
- return mi_res_simple_running(h);
+    mi_exec_next_instruction(h);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -357,13 +358,13 @@ int gmi_exec_next_instruction(mi_h *h)
 
   Command: -exec-step
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_step(mi_h *h)
 {
- mi_exec_step(h,1);
- return mi_res_simple_running(h);
+    mi_exec_step(h, 1);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -378,8 +379,8 @@ int gmi_exec_step(mi_h *h)
 
 int gmi_exec_step_cnt(mi_h *h, int count)
 {
- mi_exec_step(h,count);
- return mi_res_simple_running(h);
+    mi_exec_step(h, count);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -389,13 +390,13 @@ int gmi_exec_step_cnt(mi_h *h, int count)
 
   Command: -exec-step-instruction
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_step_instruction(mi_h *h)
 {
- mi_exec_step_instruction(h);
- return mi_res_simple_running(h);
+    mi_exec_step_instruction(h);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -406,13 +407,13 @@ line.
 
   Command: -exec-until
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_until(mi_h *h, const char *file, int line)
 {
- mi_exec_until(h,file,line);
- return mi_res_simple_running(h);
+    mi_exec_until(h, file, line);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -422,13 +423,13 @@ int gmi_exec_until(mi_h *h, const char *file, int line)
 
   Command: -exec-until (using *address)
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_until_addr(mi_h *h, void *addr)
 {
- mi_exec_until_addr(h,addr);
- return mi_res_simple_running(h);
+    mi_exec_until_addr(h, addr);
+    return mi_res_simple_running(h);
 }
 
 /**[txh]********************************************************************
@@ -439,13 +440,13 @@ int gmi_exec_until_addr(mi_h *h, void *addr)
   Command: -exec-return
   Return: A pointer to a new mi_frames structure indicating the current
 location. NULL on error.
-  
+
 ***************************************************************************/
 
 mi_frames *gmi_exec_return(mi_h *h)
 {
- mi_exec_return(h);
- return mi_res_frame(h);
+    mi_exec_return(h);
+    return mi_res_frame(h);
 }
 
 /**[txh]********************************************************************
@@ -457,12 +458,11 @@ is disabled (gmi_gdb_set("confirm","off")).
 
   Command: -exec-abort [using kill]
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_exec_kill(mi_h *h)
 {
- mi_exec_kill(h);
- return mi_res_simple_done(h);
+    mi_exec_kill(h);
+    return mi_res_simple_done(h);
 }
-

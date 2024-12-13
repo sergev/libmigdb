@@ -2,17 +2,17 @@
 
   GDB/MI interface library
   Copyright (c) 2004 by Salvador E. Tropea.
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -92,76 +92,67 @@ Fixed by Changelog entry:
 
 void mi_data_evaluate_expression(mi_h *h, const char *expression)
 {
- mi_send(h,"-data-evaluate-expression \"%s\"\n",expression);
+    mi_send(h, "-data-evaluate-expression \"%s\"\n", expression);
 }
 
 void mi_dir(mi_h *h, const char *path)
 {
- if (h->version>=MI_VERSION2U(2,0,0))
-   {// MI v2
-    if (path)
-       mi_send(h,"-environment-directory \"%s\"\n",path);
+    if (h->version >= MI_VERSION2U(2, 0, 0)) { // MI v2
+        if (path)
+            mi_send(h, "-environment-directory \"%s\"\n", path);
+        else
+            mi_send(h, "-environment-directory -r\n");
+    } else {
+        mi_send(h, "-environment-directory %s\n", path ? path : "");
+    }
+}
+
+void mi_data_read_memory_hx(mi_h *h, const char *exp, unsigned ws, unsigned c, int convAddr)
+{
+    if (convAddr)
+        mi_send(h, "-data-read-memory \"&%s\" x %d 1 %d\n", exp, ws, c);
     else
-       mi_send(h,"-environment-directory -r\n");
-   }
- else
-   {
-    mi_send(h,"-environment-directory %s\n",path ? path : "");
-   }
+        mi_send(h, "-data-read-memory \"%s\" x %d 1 %d\n", exp, ws, c);
 }
 
-void mi_data_read_memory_hx(mi_h *h, const char *exp, unsigned ws,
-                            unsigned c, int convAddr)
+void mi_data_disassemble_se(mi_h *h, const char *start, const char *end, int mode)
 {
- if (convAddr)
-    mi_send(h,"-data-read-memory \"&%s\" x %d 1 %d\n",exp,ws,c);
- else
-    mi_send(h,"-data-read-memory \"%s\" x %d 1 %d\n",exp,ws,c);
+    mi_send(h, "-data-disassemble -s \"%s\" -e \"%s\" -- %d\n", start, end, mode);
 }
 
-void mi_data_disassemble_se(mi_h *h, const char *start, const char *end,
-                            int mode)
+void mi_data_disassemble_fl(mi_h *h, const char *file, int line, int lines, int mode)
 {
- mi_send(h,"-data-disassemble -s \"%s\" -e \"%s\" -- %d\n",start,end,mode);
-}
-
-void mi_data_disassemble_fl(mi_h *h, const char *file, int line, int lines,
-                            int mode)
-{
- mi_send(h,"-data-disassemble -f \"%s\" -l %d -n %d -- %d\n",file,line,lines,
-         mode);
+    mi_send(h, "-data-disassemble -f \"%s\" -l %d -n %d -- %d\n", file, line, lines, mode);
 }
 
 void mi_data_list_register_names(mi_h *h)
 {
- mi_send(h,"-data-list-register-names\n");
+    mi_send(h, "-data-list-register-names\n");
 }
 
 void mi_data_list_register_names_l(mi_h *h, mi_chg_reg *l)
 {
- mi_send(h,"-data-list-register-names ");
- while (l)
-   {
-    mi_send(h,"%d ",l->reg);
-    l=l->next;
-   }
- mi_send(h,"\n");
+    mi_send(h, "-data-list-register-names ");
+    while (l) {
+        mi_send(h, "%d ", l->reg);
+        l = l->next;
+    }
+    mi_send(h, "\n");
 }
 
 void mi_data_list_changed_registers(mi_h *h)
 {
- mi_send(h,"-data-list-changed-registers\n");
+    mi_send(h, "-data-list-changed-registers\n");
 }
 
 void mi_data_list_register_values(mi_h *h, enum mi_gvar_fmt fmt, mi_chg_reg *l)
 {
- mi_send(h,"-data-list-register-values %c ",mi_format_enum_to_char(fmt));
- while (l)
-   {
-    mi_send(h,"%d ",l->reg);
-    l=l->next;
-   }
- mi_send(h,"\n");
+    mi_send(h, "-data-list-register-values %c ", mi_format_enum_to_char(fmt));
+    while (l) {
+        mi_send(h, "%d ", l->reg);
+        l = l->next;
+    }
+    mi_send(h, "\n");
 }
 
 /* High level versions. */
@@ -173,13 +164,13 @@ void mi_data_list_register_values(mi_h *h, enum mi_gvar_fmt fmt, mi_chg_reg *l)
 
   Command: -data-evaluate-expression
   Return: The resulting value (as plain text) or NULL on error.
-  
+
 ***************************************************************************/
 
 char *gmi_data_evaluate_expression(mi_h *h, const char *expression)
 {
- mi_data_evaluate_expression(h,expression);
- return mi_res_value(h);
+    mi_data_evaluate_expression(h, expression);
+    return mi_res_value(h);
 }
 
 /**[txh]********************************************************************
@@ -190,66 +181,62 @@ the program to debug. Only the MI v1 implementation is available.
 
   Command: -environment-directory
   Return: !=0 OK
-  
+
 ***************************************************************************/
 
 int gmi_dir(mi_h *h, const char *path)
 {
- mi_dir(h,path);
- return mi_res_simple_done(h);
+    mi_dir(h, path);
+    return mi_res_simple_done(h);
 }
 
-int gmi_read_memory(mi_h *h, const char *exp, unsigned size,
-                    unsigned char *dest, int *na, int convAddr,
-                    unsigned long *addr)
+int gmi_read_memory(mi_h *h, const char *exp, unsigned size, unsigned char *dest, int *na,
+                    int convAddr, unsigned long *addr)
 {
- mi_data_read_memory_hx(h,exp,1,size,convAddr);
- return mi_get_read_memory(h,dest,1,na,addr);
+    mi_data_read_memory_hx(h, exp, 1, size, convAddr);
+    return mi_get_read_memory(h, dest, 1, na, addr);
 }
 
-mi_asm_insns *gmi_data_disassemble_se(mi_h *h, const char *start,
-                                      const char *end, int mode)
+mi_asm_insns *gmi_data_disassemble_se(mi_h *h, const char *start, const char *end, int mode)
 {
- mi_data_disassemble_se(h,start,end,mode);
- return mi_get_asm_insns(h);
+    mi_data_disassemble_se(h, start, end, mode);
+    return mi_get_asm_insns(h);
 }
 
-mi_asm_insns *gmi_data_disassemble_fl(mi_h *h, const char *file, int line,
-                                      int lines, int mode)
+mi_asm_insns *gmi_data_disassemble_fl(mi_h *h, const char *file, int line, int lines, int mode)
 {
- mi_data_disassemble_fl(h,file,line,lines,mode);
- return mi_get_asm_insns(h);
+    mi_data_disassemble_fl(h, file, line, lines, mode);
+    return mi_get_asm_insns(h);
 }
 
 // Affected by gdb bug mi/1770
 mi_chg_reg *gmi_data_list_register_names(mi_h *h, int *how_many)
 {
- mi_data_list_register_names(h);
- return mi_get_list_registers(h,how_many);
+    mi_data_list_register_names(h);
+    return mi_get_list_registers(h, how_many);
 }
 
 int gmi_data_list_register_names_l(mi_h *h, mi_chg_reg *l)
 {
- mi_data_list_register_names_l(h,l);
- return mi_get_list_registers_l(h,l);
+    mi_data_list_register_names_l(h, l);
+    return mi_get_list_registers_l(h, l);
 }
 
 mi_chg_reg *gmi_data_list_changed_registers(mi_h *h)
 {
- mi_error=MI_OK;
- mi_data_list_changed_registers(h);
- return mi_get_list_changed_regs(h);
+    mi_error = MI_OK;
+    mi_data_list_changed_registers(h);
+    return mi_get_list_changed_regs(h);
 }
 
 int gmi_data_list_register_values(mi_h *h, enum mi_gvar_fmt fmt, mi_chg_reg *l)
 {
- mi_data_list_register_values(h,fmt,l);
- return mi_get_reg_values(h,l);
+    mi_data_list_register_values(h, fmt, l);
+    return mi_get_reg_values(h, l);
 }
 
 mi_chg_reg *gmi_data_list_all_register_values(mi_h *h, enum mi_gvar_fmt fmt, int *how_many)
 {
- mi_data_list_register_values(h,fmt,NULL);
- return mi_get_reg_values_l(h,how_many);
+    mi_data_list_register_values(h, fmt, NULL);
+    return mi_get_reg_values_l(h, how_many);
 }
-

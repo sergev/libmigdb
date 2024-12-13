@@ -2,6 +2,6 @@
 
 int main()
 {
- fputs(MI_VERSION_STR,stdout);
- return 0;
+    fputs(MI_VERSION_STR, stdout);
+    return 0;
 }
