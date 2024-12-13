@@ -5,15 +5,15 @@ int v = 2;
 struct {
     char *a;
     int q;
-} sup;
+} sup __attribute__((unused));
 
-int FuncLev2(char *str)
+int FuncLev2(const char *str)
 {
     v = 5;
     return strlen(str);
 }
 
-int FuncLev1(char *s, int i)
+int FuncLev1(const char *s, int i)
 {
     i += FuncLev2(s);
     return i;
